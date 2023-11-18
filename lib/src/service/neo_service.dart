@@ -144,9 +144,8 @@ class NeoService {
     Map<String, dynamic> properties,
     String label,
   ) async {
-    //Put \" on string properties
     for (final pair in properties.entries) {
-      if (pair.value is String) properties[pair.key] = "\"${pair.value}\"";
+      properties[pair.key] = "'${jsonEncode(pair.value)}'";
     }
 
     var q = 'CREATE (n:$label $properties) RETURN n, labels(n)';
