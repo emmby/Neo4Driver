@@ -145,7 +145,7 @@ class NeoService {
     String label,
   ) async {
     for (final pair in properties.entries) {
-      properties[pair.key] = jsonEncode(pair.value);
+      properties[pair.key] = jsonEncode(pair.value).replaceAll(r'\', r'\\');
     }
 
     var q = 'CREATE (n:$label $properties) RETURN n, labels(n)';
