@@ -144,11 +144,15 @@ class NeoService {
     Map<String, dynamic> properties,
     String label,
   ) async {
-    for (final pair in properties.entries) {
-      properties[pair.key] = jsonEncode(pair.value).replaceAll(r'\', r'\\');
-    }
+    // for (final pair in properties.entries) {
+    //   properties[pair.key] = jsonEncode(pair.value).replaceAll(r'\', r'\\');
+    // }
 
-    var q = 'CREATE (n:$label $properties) RETURN n, labels(n)';
+    String propertiesStr = properties.entries
+        .map((e) => "${e.key}: ${jsonEncode(e.value).replaceAll(r'\', r'\\')}")
+        .join(',');
+
+    var q = 'CREATE (n:$label {$propertiesStr}) RETURN n, labels(n)';
     print(q);
     return await _cypherExecutor.executeQuery(
       method: HTTPMethod.post,
