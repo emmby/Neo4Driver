@@ -146,10 +146,10 @@ class NeoService {
   ) async {
     //Put \" on string properties
     for (final pair in properties.entries) {
-      properties[pair.key] = jsonEncode(pair.value);
+      if (pair.value is String) properties[pair.key] = "\"${pair.value}\"";
     }
 
-    String q = 'CREATE (n:$label $properties) RETURN n, labels(n)';
+    var q = 'CREATE (n:$label $properties) RETURN n, labels(n)';
     print(q);
     return await _cypherExecutor.executeQuery(
       method: HTTPMethod.post,
