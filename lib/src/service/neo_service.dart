@@ -149,9 +149,9 @@ class NeoService {
     // }
 
     String propertiesStr = properties.entries
-        .map((e) => "${e.key}: ${jsonEncode(e.value).replaceAll(r'\', r'\\')}")
+        .map((e) => e.key + ":" + jsonEncode(e.value).replaceAll(r'\', r'\\'))
         .join(',');
-
+    print(propertiesStr);
     var q = 'CREATE (n:$label {$propertiesStr}) RETURN n, labels(n)';
     print(q);
     return await _cypherExecutor.executeQuery(
