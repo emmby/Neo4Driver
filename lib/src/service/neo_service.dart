@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:neo4driver/src/interceptor/custom_interceptor.dart';
+
 import '../../neo4driver.dart';
 import '../entity/path.dart';
 import '../enum/http_method.dart';
@@ -149,7 +151,7 @@ class NeoService {
     // }
 
     String propertiesStr = properties.entries
-        .map((e) => e.key + ":" + jsonEncode(e.value))
+        .map((e) => "${e.key}:${jsonEncode(e.value)}")
         .join(',');
     print(propertiesStr);
     var q = 'CREATE (n:$label {$propertiesStr}) RETURN n, labels(n)';
@@ -340,40 +342,13 @@ class NeoService {
       int nodeId, Map<String, dynamic> propertiesToAddOrUpdate) async {
     String query = "MATCH(n) WHERE id(n)=$nodeId ";
 
-    // if (propertiesToAddOrUpdate.length == 1) {
-    //   if (propertiesToAddOrUpdate.values.first is String) {
-    //     query +=
-    //         "SET n.${propertiesToAddOrUpdate.keys.first}='${propertiesToAddOrUpdate.values.first}'";
-    //   } else {
-    //     query +=
-    //         "SET n.${propertiesToAddOrUpdate.keys.first}=${propertiesToAddOrUpdate.values.first}";
-    //   }
-    // } else if (propertiesToAddOrUpdate.length > 1) {
-    //   final buffer = StringBuffer("SET ");
-    //   final iterator = propertiesToAddOrUpdate.entries.iterator;
-
-    //   while (iterator.moveNext()) {
-    //     buffer.write("n.${iterator.current.key}");
-    //     buffer.write("=");
-    //     if (iterator.current.value is String) {
-    //       buffer.write("'${iterator.current.value}'");
-    //     } else {
-    //       buffer.write(iterator.current.value);
-    //     }
-
-    //     if (iterator.current.key != propertiesToAddOrUpdate.keys.last) {
-    //       buffer.write(",");
-    //     }
-    //   }
-    //   query += buffer.toString();
     if (propertiesToAddOrUpdate.isEmpty) {
       throw NoPropertiesException(
           cause: "properties are necessary to find node with given properties");
     }
 
-    String propertiesStr = propertiesToAddOrUpdate.entries
-        .map((e) => "SET n.${e.key}=${jsonEncode(e.value)}")
-        .join(',');
+    String propertiesStr =
+        "SET n += ${propertiesToAddOrUpdate.entries.map((e) => "${e.key}: ${jsonEncode(e.value)}").join(',')}";
     print(propertiesStr);
     query += propertiesStr;
 
