@@ -348,7 +348,7 @@ class NeoService {
     }
 
     String propertiesStr =
-        "SET n += ${propertiesToAddOrUpdate.entries.map((e) => "${e.key}: ${jsonEncode(e.value)}").join(',')}";
+        "SET n += {${propertiesToAddOrUpdate.entries.map((e) => "${e.key}: ${jsonEncode(e.value)}").join(',')}}";
     print(propertiesStr);
     query += propertiesStr;
 
